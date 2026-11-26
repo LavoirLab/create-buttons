@@ -1,0 +1,567 @@
+:root {
+  --tg-bg-color: var(--tg-theme-bg-color, #ffffff);
+  --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f7);
+  --tg-text-color: var(--tg-theme-text-color, #111827);
+  --tg-hint-color: var(--tg-theme-hint-color, #6b7280);
+  --tg-link-color: var(--tg-theme-link-color, #2481cc);
+  --tg-button-color: var(--tg-theme-button-color, #2481cc);
+  --tg-button-text-color: var(--tg-theme-button-text-color, #ffffff);
+
+  --accent-green: #28a745;
+  --accent-green-hover: #218838;
+  --accent-red: #e53935;
+  --accent-red-hover: #c62828;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --card-radius: 12px;
+  --button-radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tg-bg-color: var(--tg-theme-bg-color, #17212b);
+    --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #0e1621);
+    --tg-text-color: var(--tg-theme-text-color, #f5f5f5);
+    --tg-hint-color: var(--tg-theme-hint-color, #708499);
+    --border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--tg-bg-color);
+  color: var(--tg-text-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-x: hidden;
+}
+
+/* Outside Telegram Warning */
+.outside-banner {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.outside-card {
+  background: var(--tg-bg-color);
+  border-radius: 16px;
+  padding: 28px 24px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.outside-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.outside-card h2 {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.outside-card p {
+  font-size: 14px;
+  color: var(--tg-hint-color);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.btn-demo {
+  background-color: var(--tg-link-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* App Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 540px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 16px 16px 90px 16px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.header-subtitle {
+  font-size: 12px;
+  color: var(--tg-hint-color);
+  margin-top: 2px;
+}
+
+.btn-clear-all {
+  background: transparent;
+  border: none;
+  color: var(--tg-hint-color);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.btn-clear-all:active {
+  background: var(--tg-secondary-bg);
+}
+
+/* Keyboard Matrix */
+.keyboard-canvas {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto 0;
+  padding: 40px 16px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 44px;
+  margin-bottom: 12px;
+  opacity: 0.85;
+}
+
+.empty-state h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.empty-state p {
+  font-size: 13px;
+  color: var(--tg-hint-color);
+  max-width: 260px;
+  line-height: 1.4;
+  margin-bottom: 24px;
+}
+
+.btn-add-row-primary {
+  background-color: var(--tg-link-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--button-radius);
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(36, 129, 204, 0.25);
+  transition: transform 0.1s ease;
+}
+
+.btn-add-row-primary:active {
+  transform: scale(0.97);
+}
+
+.rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Single Row */
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tg-secondary-bg);
+  padding: 8px;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--border-color);
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.row-buttons {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+/* User Defined Telegram Button */
+.tg-btn-item {
+  flex: 1;
+  min-width: 80px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: var(--button-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background-color: var(--tg-bg-color);
+  color: var(--tg-text-color);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease, background-color 0.15s ease;
+}
+
+.tg-btn-item:active {
+  transform: scale(0.98);
+}
+
+/* Button Colors */
+.tg-btn-item.color-primary {
+  background-color: var(--tg-link-color);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.tg-btn-item.color-green {
+  background-color: #2e7d32;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.tg-btn-item.color-orange {
+  background-color: #f57c00;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.tg-btn-item.color-dark {
+  background-color: #263238;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+/* Add Button (+) */
+.btn-add-item {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--button-radius);
+  background: var(--tg-bg-color);
+  color: var(--tg-link-color);
+  border: 1px dashed var(--tg-link-color);
+  font-size: 22px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-add-item:active {
+  background-color: rgba(36, 129, 204, 0.1);
+}
+
+/* Row Action (Delete Row) */
+.btn-delete-row {
+  width: 32px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--tg-hint-color);
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.btn-delete-row:hover,
+.btn-delete-row:active {
+  opacity: 1;
+  color: var(--accent-red);
+}
+
+/* Add Row Wrapper */
+.add-row-wrapper {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-add-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--tg-secondary-bg);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--button-radius);
+  color: var(--tg-link-color);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.btn-add-row:active {
+  background: rgba(36, 129, 204, 0.08);
+}
+
+/* Bottom Bar */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--tg-bg-color);
+  border-top: 1px solid var(--border-color);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+}
+
+.btn-save-main {
+  max-width: 540px;
+  width: 100%;
+  height: 48px;
+  background-color: var(--accent-green);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--button-radius);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
+  transition: transform 0.1s ease, background-color 0.15s;
+}
+
+.btn-save-main:active {
+  background-color: var(--accent-green-hover);
+  transform: scale(0.98);
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-card {
+  background: var(--tg-bg-color);
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 28px 20px;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15);
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  color: var(--tg-hint-color);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tg-hint-color);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: var(--tg-secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--button-radius);
+  color: var(--tg-text-color);
+  padding: 12px 14px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--tg-link-color);
+}
+
+.field-hint {
+  font-size: 11px;
+  color: var(--tg-hint-color);
+  margin-top: 2px;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.select-wrapper::after {
+  content: '▼';
+  font-size: 10px;
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--tg-hint-color);
+  pointer-events: none;
+}
+
+/* Emoji Palette */
+.emoji-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.emoji-chip {
+  background: var(--tg-secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.emoji-chip:active {
+  transform: scale(1.2);
+}
+
+/* Modal Actions */
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 46px;
+  border-radius: var(--button-radius);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background-color: var(--accent-red);
+  color: #fff;
+}
+
+.btn-delete:active {
+  background-color: var(--accent-red-hover);
+}
+
+.btn-save {
+  background-color: var(--accent-green);
+  color: #fff;
+}
+
+.btn-save:active {
+  background-color: var(--accent-green-hover);
+}
+
+.hidden {
+  display: none !important;
+}

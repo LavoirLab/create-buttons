@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Button Builder</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Browser Warning Banner / Modal (if opened outside Telegram) -->
+  <div id="outside-warning" class="outside-banner hidden">
+    <div class="outside-card">
+      <div class="outside-icon">⚠️</div>
+      <h2>Open Inside Telegram</h2>
+      <p>This button builder is designed to be opened from your Telegram Bot.</p>
+      <button id="btn-continue-demo" class="btn-demo">Explore Demo Mode</button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    <!-- Top Bar -->
+    <header class="app-header">
+      <div class="header-info">
+        <h1 class="header-title">Inline Buttons</h1>
+        <p class="header-subtitle">Tap + to add buttons, tap any button to edit</p>
+      </div>
+      <button id="btn-clear-all" class="btn-clear-all" title="Clear all buttons">Reset</button>
+    </header>
+
+    <!-- Canvas / Keyboard Matrix -->
+    <main class="keyboard-canvas" id="keyboard-canvas">
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">🎛️</div>
+        <h3>No Buttons Added</h3>
+        <p>Start designing your post keyboard by adding your first row.</p>
+        <button id="btn-add-first-row" class="btn-add-row-primary">+ Add Row</button>
+      </div>
+
+      <div id="rows-container" class="rows-container">
+        <!-- Button rows dynamically injected here -->
+      </div>
+
+      <div id="add-row-wrapper" class="add-row-wrapper hidden">
+        <button id="btn-add-row" class="btn-add-row">
+          <span class="plus-icon">+</span> Add Row
+        </button>
+      </div>
+    </main>
+
+    <!-- Bottom Action Bar -->
+    <footer class="app-footer">
+      <button id="btn-save-main" class="btn-save-main">
+        <span>SAVE</span>
+      </button>
+    </footer>
+  </div>
+
+  <!-- Manage Button Modal -->
+  <div id="modal-manage" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Manage button</h3>
+        <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Type Selection -->
+        <div class="form-group">
+          <label class="form-label" for="btn-type">Button Type</label>
+          <div class="select-wrapper">
+            <select id="btn-type" class="form-select">
+              <option value="url">Link</option>
+              <option value="share">Share</option>
+              <option value="copy">Copy</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Name / Label -->
+        <div class="form-group">
+          <label class="form-label" for="btn-name">Name</label>
+          <input type="text" id="btn-name" class="form-input" placeholder="e.g. Join Channel or Visit Website" maxlength="64" autocomplete="off">
+        </div>
+
+        <!-- Dynamic Value Input -->
+        <div class="form-group" id="group-target">
+          <label class="form-label" id="label-target" for="btn-target">Link</label>
+          <input type="text" id="btn-target" class="form-input" placeholder="https://t.me/..." autocomplete="off">
+          <textarea id="btn-target-area" class="form-textarea hidden" rows="3" placeholder="Enter text to share..."></textarea>
+          <div id="field-hint" class="field-hint">Must start with http://, https://, or t.me/</div>
+        </div>
+
+        <!-- Background Color -->
+        <div class="form-group">
+          <label class="form-label" for="btn-color">Background color</label>
+          <div class="select-wrapper">
+            <select id="btn-color" class="form-select">
+              <option value="transparent">Transparent (Default)</option>
+              <option value="primary">Primary Color (Blue)</option>
+              <option value="green">Emerald Green</option>
+              <option value="orange">Sunset Orange</option>
+              <option value="dark">Dark Slate</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Emojis -->
+        <div class="form-group">
+          <label class="form-label">Quick Emoji</label>
+          <div class="emoji-palette">
+            <button type="button" class="emoji-chip" data-emoji="🔥">🔥</button>
+            <button type="button" class="emoji-chip" data-emoji="⚡️">⚡️</button>
+            <button type="button" class="emoji-chip" data-emoji="💎">💎</button>
+            <button type="button" class="emoji-chip" data-emoji="📢">📢</button>
+            <button type="button" class="emoji-chip" data-emoji="💬">💬</button>
+            <button type="button" class="emoji-chip" data-emoji="🚀">🚀</button>
+            <button type="button" class="emoji-chip" data-emoji="🔗">🔗</button>
+            <button type="button" class="emoji-chip" data-emoji="🎁">🎁</button>
+            <button type="button" class="emoji-chip" data-emoji="⭐">⭐</button>
+            <button type="button" class="emoji-chip" data-emoji="✅">✅</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="modal-btn-delete" class="modal-btn btn-delete hidden">Delete</button>
+        <button id="modal-btn-save" class="modal-btn btn-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
