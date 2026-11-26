@@ -262,6 +262,8 @@ function saveModalButton() {
     // Auto-prefix if bare t.me link
     if (target.startsWith('t.me/')) {
       target = 'https://' + target;
+    } else if (target.startsWith('http://t.me/')) {
+      target = 'https://t.me/' + target.slice('http://t.me/'.length);
     } else if (!target.startsWith('http://') && !target.startsWith('https://')) {
       target = 'https://' + target;
     }
@@ -354,19 +356,31 @@ function handleSave() {
 
     const jsonString = JSON.stringify(payload);
 
+    // Show spinning indicator on Telegram MainButton
+    if (tg?.MainButton) {
+      tg.MainButton.showProgress(false);
+    }
+
     if (tg && tg.sendData) {
-      try {
-        tg.sendData(jsonString);
-      } catch (err) {
-        alert('Telegram sendData failed: ' + (err?.message || err));
-      }
+      setTimeout(() => {
+        try {
+          tg.sendData(jsonString);
+        } catch (err) {
+          if (tg?.MainButton) tg.MainButton.hideProgress();
+          alert('Telegram sendData failed: ' + (err?.message || err));
+        }
+      }, 300);
     } else {
       // Demo Mode outside Telegram
       console.log('Generated Button Data:', jsonString);
       navigator.clipboard?.writeText(jsonString).catch(() => {});
-      alert(`Buttons saved successfully!\n\nPayload:\n${jsonString}\n\n(Copied to clipboard in demo mode)`);
+      setTimeout(() => {
+        if (tg?.MainButton) tg.MainButton.hideProgress();
+        alert(`Buttons saved successfully!\n\nPayload:\n${jsonString}\n\n(Copied to clipboard in demo mode)`);
+      }, 300);
     }
   } catch (e) {
+    if (tg?.MainButton) tg.MainButton.hideProgress();
     alert('Error saving buttons: ' + (e?.message || e));
   }
 }
