@@ -23,13 +23,8 @@ const btnDemoSave = document.getElementById('btn-demo-save');
 const modal = document.getElementById('modal-manage');
 const modalTitle = document.getElementById('modal-title');
 const modalClose = document.getElementById('modal-close');
-const btnType = document.getElementById('btn-type');
 const btnName = document.getElementById('btn-name');
-const groupTarget = document.getElementById('group-target');
-const labelTarget = document.getElementById('label-target');
 const btnTarget = document.getElementById('btn-target');
-const btnTargetArea = document.getElementById('btn-target-area');
-const fieldHint = document.getElementById('field-hint');
 const btnColor = document.getElementById('btn-color');
 const modalBtnSave = document.getElementById('modal-btn-save');
 const modalBtnDelete = document.getElementById('modal-btn-delete');
@@ -85,8 +80,6 @@ modalClose.addEventListener('click', closeModal);
 modal.addEventListener('click', (e) => {
   if (e.target === modal) closeModal();
 });
-
-btnType.addEventListener('change', updateModalFieldsForType);
 
 modalBtnSave.addEventListener('click', saveModalButton);
 modalBtnDelete.addEventListener('click', deleteModalButton);
@@ -182,22 +175,19 @@ function openModal(rowIndex, btnIndex, isNewRow = false) {
     // Edit existing button
     const btn = keyboardRows[rowIndex][btnIndex];
     modalTitle.textContent = 'Edit button';
-    btnType.value = btn.type || 'url';
     btnName.value = btn.name || '';
+    btnTarget.value = btn.target || '';
     btnColor.value = btn.color || 'transparent';
-    setTargetValue(btn.target || '');
     modalBtnDelete.classList.remove('hidden');
   } else {
     // Add new button
     modalTitle.textContent = isNewRow ? 'Add button' : 'Manage button';
-    btnType.value = 'url';
     btnName.value = '';
+    btnTarget.value = '';
     btnColor.value = 'transparent';
-    setTargetValue('');
     modalBtnDelete.classList.add('hidden');
   }
 
-  updateModalFieldsForType();
   modal.classList.remove('hidden');
   setTimeout(() => btnName.focus(), 100);
 }
@@ -209,42 +199,9 @@ function closeModal() {
   render();
 }
 
-function updateModalFieldsForType() {
-  const type = btnType.value;
-  if (type === 'url') {
-    labelTarget.textContent = 'Link';
-    btnTarget.classList.remove('hidden');
-    btnTargetArea.classList.add('hidden');
-    btnTarget.placeholder = 'https://t.me/... or https://example.com';
-    fieldHint.textContent = 'Must be a valid web link or Telegram link';
-  } else if (type === 'share') {
-    labelTarget.textContent = 'Text to share';
-    btnTarget.classList.add('hidden');
-    btnTargetArea.classList.remove('hidden');
-    btnTargetArea.placeholder = 'Enter message text to share...';
-    fieldHint.textContent = 'Generates Telegram share link';
-  } else if (type === 'copy') {
-    labelTarget.textContent = 'Text to copy';
-    btnTarget.classList.remove('hidden');
-    btnTargetArea.classList.add('hidden');
-    btnTarget.placeholder = 'Text that will be copied on tap';
-    fieldHint.textContent = 'Copies text when tapped';
-  }
-}
-
-function getTargetValue() {
-  return btnType.value === 'share' ? btnTargetArea.value.trim() : btnTarget.value.trim();
-}
-
-function setTargetValue(val) {
-  btnTarget.value = val;
-  btnTargetArea.value = val;
-}
-
 function saveModalButton() {
   const name = btnName.value.trim();
-  let target = getTargetValue();
-  const type = btnType.value;
+  const target = btnTarget.value.trim();
   const color = btnColor.value;
 
   if (!name) {
@@ -253,32 +210,23 @@ function saveModalButton() {
     return;
   }
 
-  if (type === 'url') {
-    if (!target) {
-      alert('Please enter a Link URL');
-      btnTarget.focus();
-      return;
-    }
-    // Auto-prefix if bare t.me link
-    if (target.startsWith('t.me/')) {
-      target = 'https://' + target;
-    } else if (target.startsWith('http://t.me/')) {
-      target = 'https://t.me/' + target.slice('http://t.me/'.length);
-    } else if (!target.startsWith('http://') && !target.startsWith('https://')) {
-      target = 'https://' + target;
-    }
-  } else if (type === 'share') {
-    if (!target) {
-      alert('Please enter text to share');
-      btnTargetArea.focus();
-      return;
-    }
+  if (!target) {
+    alert('Please enter a button URL');
+    btnTarget.focus();
+    return;
+  }
+
+  // Warn if URL does not contain protocol
+  if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//i.test(target) && !target.startsWith('tg:')) {
+    alert('⚠️ Invalid URL! Please enter the complete URL with protocol (e.g. https://... or tg://...)');
+    btnTarget.focus();
+    return;
   }
 
   const { rowIndex, btnIndex, isNewRow } = editingTarget;
   const buttonData = {
     name,
-    type,
+    type: 'url',
     target,
     color
   };
@@ -311,26 +259,16 @@ function deleteModalButton() {
 
 // Format final payload for Telegram Bot
 function generatePayload() {
-  // Telegram Inline Keyboard format: array of rows
-  // Each button: { text: "...", url: "..." }
   const matrix = [];
 
   keyboardRows.forEach(row => {
     const rowButtons = [];
     row.forEach(b => {
-      let finalUrl = b.target;
-      if (b.type === 'share') {
-        finalUrl = `https://t.me/share/url?url=&text=${encodeURIComponent(b.target)}`;
-      } else if (b.type === 'copy') {
-        // Fallback for copy buttons if standard URL
-        finalUrl = `https://t.me/share/url?url=${encodeURIComponent(b.target)}`;
-      }
-      
       rowButtons.push({
         text: b.name,
-        url: finalUrl,
-        type: b.type,
-        color: b.color
+        url: b.target,
+        type: 'url',
+        color: b.color || 'transparent'
       });
     });
     if (rowButtons.length > 0) {

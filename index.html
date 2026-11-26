@@ -65,30 +65,17 @@
       </div>
 
       <div class="modal-body">
-        <!-- Type Selection -->
-        <div class="form-group">
-          <label class="form-label" for="btn-type">Button Type</label>
-          <div class="select-wrapper">
-            <select id="btn-type" class="form-select">
-              <option value="url">Link</option>
-              <option value="share">Share</option>
-              <option value="copy">Copy</option>
-            </select>
-          </div>
-        </div>
-
         <!-- Name / Label -->
         <div class="form-group">
           <label class="form-label" for="btn-name">Name</label>
           <input type="text" id="btn-name" class="form-input" placeholder="e.g. Join Channel or Visit Website" maxlength="64" autocomplete="off">
         </div>
 
-        <!-- Dynamic Value Input -->
+        <!-- URL Input -->
         <div class="form-group" id="group-target">
-          <label class="form-label" id="label-target" for="btn-target">Link</label>
-          <input type="text" id="btn-target" class="form-input" placeholder="https://t.me/..." autocomplete="off">
-          <textarea id="btn-target-area" class="form-textarea hidden" rows="3" placeholder="Enter text to share..."></textarea>
-          <div id="field-hint" class="field-hint">Must start with http://, https://, or t.me/</div>
+          <label class="form-label" id="label-target" for="btn-target">Button URL</label>
+          <input type="text" id="btn-target" class="form-input" placeholder="https://..." autocomplete="off">
+          <div id="field-hint" class="field-hint">Enter the full destination URL (e.g. https://... or tg://...)</div>
         </div>
 
         <!-- Background Color (Transparent, Blue, Green, Red) -->
