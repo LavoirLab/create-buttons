@@ -1,6 +1,5 @@
 // Initialize Telegram WebApp
 const tg = window.Telegram?.WebApp;
-const isTelegram = Boolean(tg?.initData);
 
 // State: matrix of rows -> array of button objects
 // Each button: { id: string, name: string, type: 'url' | 'share' | 'copy', target: string, color: string }
@@ -8,8 +7,6 @@ let keyboardRows = [];
 let editingTarget = null; // { rowIndex, btnIndex, isNewRow } or null
 
 // DOM Elements
-const outsideWarning = document.getElementById('outside-warning');
-const btnContinueDemo = document.getElementById('btn-continue-demo');
 const emptyState = document.getElementById('empty-state');
 const rowsContainer = document.getElementById('rows-container');
 const addRowWrapper = document.getElementById('add-row-wrapper');
@@ -32,35 +29,30 @@ const modalBtnDelete = document.getElementById('modal-btn-delete');
 // Initialize WebApp Environment
 function initApp() {
   if (tg) {
-    tg.ready();
-    tg.expand();
-    
-    // Telegram MainButton integration
-    if (tg.MainButton) {
-      tg.MainButton.setText('SAVE');
-      tg.MainButton.setParams({
-        color: '#28a745',
-        text_color: '#ffffff',
-        is_active: true,
-        is_visible: false // show when keyboard has buttons
-      });
-      tg.MainButton.onClick(handleSave);
+    try {
+      tg.ready();
+      tg.expand();
+      
+      // Telegram MainButton integration
+      if (tg.MainButton) {
+        tg.MainButton.setText('SAVE');
+        tg.MainButton.setParams({
+          color: '#28a745',
+          text_color: '#ffffff',
+          is_active: true,
+          is_visible: false // show when keyboard has buttons
+        });
+        tg.MainButton.onClick(handleSave);
+      }
+    } catch (e) {
+      console.error('Telegram WebApp init error:', e);
     }
-  }
-
-  // Check if opened outside Telegram
-  if (!isTelegram) {
-    outsideWarning.classList.remove('hidden');
   }
 
   render();
 }
 
 // Event Listeners
-btnContinueDemo.addEventListener('click', () => {
-  outsideWarning.classList.add('hidden');
-});
-
 btnAddFirstRow.addEventListener('click', () => addRow(true));
 btnAddRow.addEventListener('click', () => addRow(true));
 btnClearAll.addEventListener('click', () => {
@@ -111,7 +103,8 @@ function render() {
     addRowWrapper.classList.remove('hidden');
     if (tg?.MainButton) {
       tg.MainButton.show();
-    } else if (!isTelegram && btnDemoSave) {
+    }
+    if (btnDemoSave) {
       btnDemoSave.classList.remove('hidden');
     }
   }
@@ -299,7 +292,7 @@ function handleSave() {
       tg.MainButton.showProgress(false);
     }
 
-    if (tg && tg.sendData) {
+    if (tg && typeof tg.sendData === 'function') {
       setTimeout(() => {
         try {
           tg.sendData(jsonString);
@@ -307,15 +300,14 @@ function handleSave() {
           if (tg?.MainButton) tg.MainButton.hideProgress();
           alert('Telegram sendData failed: ' + (err?.message || err));
         }
-      }, 300);
+      }, 250);
     } else {
-      // Demo Mode outside Telegram
       console.log('Generated Button Data:', jsonString);
       navigator.clipboard?.writeText(jsonString).catch(() => {});
       setTimeout(() => {
         if (tg?.MainButton) tg.MainButton.hideProgress();
-        alert(`Buttons saved successfully!\n\nPayload:\n${jsonString}\n\n(Copied to clipboard in demo mode)`);
-      }, 300);
+        alert(`Buttons saved!\n\nPayload:\n${jsonString}`);
+      }, 250);
     }
   } catch (e) {
     if (tg?.MainButton) tg.MainButton.hideProgress();
