@@ -32,7 +32,6 @@ const fieldHint = document.getElementById('field-hint');
 const btnColor = document.getElementById('btn-color');
 const modalBtnSave = document.getElementById('modal-btn-save');
 const modalBtnDelete = document.getElementById('modal-btn-delete');
-const emojiChips = document.querySelectorAll('.emoji-chip');
 
 // Initialize WebApp Environment
 function initApp() {
@@ -83,14 +82,6 @@ modal.addEventListener('click', (e) => {
 
 btnType.addEventListener('change', updateModalFieldsForType);
 
-emojiChips.forEach(chip => {
-  chip.addEventListener('click', () => {
-    const emoji = chip.getAttribute('data-emoji');
-    btnName.value = btnName.value ? `${btnName.value} ${emoji}` : emoji;
-    btnName.focus();
-  });
-});
-
 modalBtnSave.addEventListener('click', saveModalButton);
 modalBtnDelete.addEventListener('click', deleteModalButton);
 
@@ -130,7 +121,7 @@ function render() {
 
     row.forEach((btn, btnIndex) => {
       const btnEl = document.createElement('div');
-      btnEl.className = `tg-btn-item color-${btn.color || 'transparent'}`;
+      btnEl.className = `tg-btn-item color-${btn.color || 'blue'}`;
       btnEl.textContent = btn.name || 'Button';
       btnEl.title = `${btn.name} (${btn.target})`;
 
@@ -182,7 +173,7 @@ function openModal(rowIndex, btnIndex) {
     modalTitle.textContent = 'Edit button';
     btnType.value = btn.type || 'url';
     btnName.value = btn.name || '';
-    btnColor.value = btn.color || 'transparent';
+    btnColor.value = btn.color || 'blue';
     setTargetValue(btn.target || '');
     modalBtnDelete.classList.remove('hidden');
   } else {
@@ -190,7 +181,7 @@ function openModal(rowIndex, btnIndex) {
     modalTitle.textContent = 'Manage button';
     btnType.value = 'url';
     btnName.value = '';
-    btnColor.value = 'transparent';
+    btnColor.value = 'blue';
     setTargetValue('');
     modalBtnDelete.classList.add('hidden');
   }

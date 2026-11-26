@@ -256,27 +256,22 @@ body {
   transform: scale(0.98);
 }
 
-/* Button Colors */
+/* Button Colors: Red, Green, Blue */
+.tg-btn-item.color-blue,
 .tg-btn-item.color-primary {
-  background-color: var(--tg-link-color);
+  background-color: #2481cc;
   color: #ffffff;
   border-color: transparent;
 }
 
 .tg-btn-item.color-green {
-  background-color: #2e7d32;
+  background-color: #28a745;
   color: #ffffff;
   border-color: transparent;
 }
 
-.tg-btn-item.color-orange {
-  background-color: #f57c00;
-  color: #ffffff;
-  border-color: transparent;
-}
-
-.tg-btn-item.color-dark {
-  background-color: #263238;
+.tg-btn-item.color-red {
+  background-color: #e53935;
   color: #ffffff;
   border-color: transparent;
 }
@@ -504,27 +499,6 @@ body {
   transform: translateY(-50%);
   color: var(--tg-hint-color);
   pointer-events: none;
-}
-
-/* Emoji Palette */
-.emoji-palette {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.emoji-chip {
-  background: var(--tg-secondary-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 18px;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-
-.emoji-chip:active {
-  transform: scale(1.2);
 }
 
 /* Modal Actions */
