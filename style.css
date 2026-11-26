@@ -105,7 +105,7 @@ body {
   max-width: 540px;
   margin: 0 auto;
   width: 100%;
-  padding: 16px 16px 90px 16px;
+  padding: 16px 16px 24px 16px;
 }
 
 .app-header {
@@ -127,6 +127,23 @@ body {
   font-size: 12px;
   color: var(--tg-hint-color);
   margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-demo-save {
+  background: var(--accent-green);
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
 }
 
 .btn-clear-all {
@@ -343,41 +360,6 @@ body {
 
 .btn-add-row:active {
   background: rgba(36, 129, 204, 0.08);
-}
-
-/* Bottom Bar */
-.app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--tg-bg-color);
-  border-top: 1px solid var(--border-color);
-  padding: 12px 16px;
-  display: flex;
-  justify-content: center;
-  z-index: 100;
-}
-
-.btn-save-main {
-  max-width: 540px;
-  width: 100%;
-  height: 48px;
-  background-color: var(--accent-green);
-  color: #ffffff;
-  border: none;
-  border-radius: var(--button-radius);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.25);
-  transition: transform 0.1s ease, background-color 0.15s;
-}
-
-.btn-save-main:active {
-  background-color: var(--accent-green-hover);
-  transform: scale(0.98);
 }
 
 /* Modal */

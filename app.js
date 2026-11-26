@@ -5,7 +5,7 @@ const isTelegram = Boolean(tg?.initData);
 // State: matrix of rows -> array of button objects
 // Each button: { id: string, name: string, type: 'url' | 'share' | 'copy', target: string, color: string }
 let keyboardRows = [];
-let editingTarget = null; // { rowIndex, btnIndex } or null
+let editingTarget = null; // { rowIndex, btnIndex, isNewRow } or null
 
 // DOM Elements
 const outsideWarning = document.getElementById('outside-warning');
@@ -17,6 +17,7 @@ const btnAddRow = document.getElementById('btn-add-row');
 const btnAddFirstRow = document.getElementById('btn-add-first-row');
 const btnSaveMain = document.getElementById('btn-save-main');
 const btnClearAll = document.getElementById('btn-clear-all');
+const btnDemoSave = document.getElementById('btn-demo-save');
 
 // Modal Elements
 const modal = document.getElementById('modal-manage');
@@ -73,7 +74,12 @@ btnClearAll.addEventListener('click', () => {
     render();
   }
 });
-btnSaveMain.addEventListener('click', handleSave);
+if (btnSaveMain) {
+  btnSaveMain.addEventListener('click', handleSave);
+}
+if (btnDemoSave) {
+  btnDemoSave.addEventListener('click', handleSave);
+}
 
 modalClose.addEventListener('click', closeModal);
 modal.addEventListener('click', (e) => {
@@ -87,29 +93,34 @@ modalBtnDelete.addEventListener('click', deleteModalButton);
 
 // Add Row
 function addRow(openModalForNew = false) {
-  const newRow = [];
-  keyboardRows.push(newRow);
-  const rowIndex = keyboardRows.length - 1;
-  render();
   if (openModalForNew) {
-    openModal(rowIndex, null);
+    // Open modal to configure first button for the new row.
+    // Do NOT create an empty row in keyboardRows until saved!
+    openModal(keyboardRows.length, null, true);
   }
 }
 
 // Render the keyboard grid
 function render() {
+  // Ensure no empty rows exist
+  keyboardRows = keyboardRows.filter(row => Array.isArray(row) && row.length > 0);
   rowsContainer.innerHTML = '';
 
-  const hasButtons = keyboardRows.some(row => row.length > 0);
+  const hasButtons = keyboardRows.length > 0;
 
-  if (!hasButtons && keyboardRows.length === 0) {
+  if (!hasButtons) {
     emptyState.classList.remove('hidden');
     addRowWrapper.classList.add('hidden');
     if (tg?.MainButton) tg.MainButton.hide();
+    if (btnDemoSave) btnDemoSave.classList.add('hidden');
   } else {
     emptyState.classList.add('hidden');
     addRowWrapper.classList.remove('hidden');
-    if (tg?.MainButton) tg.MainButton.show();
+    if (tg?.MainButton) {
+      tg.MainButton.show();
+    } else if (!isTelegram && btnDemoSave) {
+      btnDemoSave.classList.remove('hidden');
+    }
   }
 
   keyboardRows.forEach((row, rowIndex) => {
@@ -126,7 +137,7 @@ function render() {
       btnEl.title = `${btn.name} (${btn.target})`;
 
       btnEl.addEventListener('click', () => {
-        openModal(rowIndex, btnIndex);
+        openModal(rowIndex, btnIndex, false);
       });
 
       buttonsContainer.appendChild(btnEl);
@@ -140,7 +151,7 @@ function render() {
       addBtn.innerHTML = '+';
       addBtn.title = 'Add button to this row';
       addBtn.addEventListener('click', () => {
-        openModal(rowIndex, null);
+        openModal(rowIndex, null, false);
       });
       buttonsContainer.appendChild(addBtn);
     }
@@ -164,10 +175,10 @@ function render() {
 }
 
 // Modal Logic
-function openModal(rowIndex, btnIndex) {
-  editingTarget = { rowIndex, btnIndex };
+function openModal(rowIndex, btnIndex, isNewRow = false) {
+  editingTarget = { rowIndex, btnIndex, isNewRow };
   
-  if (btnIndex !== null && keyboardRows[rowIndex][btnIndex]) {
+  if (!isNewRow && btnIndex !== null && keyboardRows[rowIndex] && keyboardRows[rowIndex][btnIndex]) {
     // Edit existing button
     const btn = keyboardRows[rowIndex][btnIndex];
     modalTitle.textContent = 'Edit button';
@@ -178,7 +189,7 @@ function openModal(rowIndex, btnIndex) {
     modalBtnDelete.classList.remove('hidden');
   } else {
     // Add new button
-    modalTitle.textContent = 'Manage button';
+    modalTitle.textContent = isNewRow ? 'Add button' : 'Manage button';
     btnType.value = 'url';
     btnName.value = '';
     btnColor.value = 'blue';
@@ -194,6 +205,8 @@ function openModal(rowIndex, btnIndex) {
 function closeModal() {
   modal.classList.add('hidden');
   editingTarget = null;
+  keyboardRows = keyboardRows.filter(row => Array.isArray(row) && row.length > 0);
+  render();
 }
 
 function updateModalFieldsForType() {
@@ -260,7 +273,7 @@ function saveModalButton() {
     }
   }
 
-  const { rowIndex, btnIndex } = editingTarget;
+  const { rowIndex, btnIndex, isNewRow } = editingTarget;
   const buttonData = {
     name,
     type,
@@ -268,28 +281,30 @@ function saveModalButton() {
     color
   };
 
-  if (btnIndex === null) {
+  if (isNewRow) {
+    keyboardRows.push([buttonData]);
+  } else if (btnIndex === null) {
+    if (!keyboardRows[rowIndex]) {
+      keyboardRows[rowIndex] = [];
+    }
     keyboardRows[rowIndex].push(buttonData);
   } else {
     keyboardRows[rowIndex][btnIndex] = buttonData;
   }
 
   closeModal();
-  render();
 }
 
 function deleteModalButton() {
   if (!editingTarget) return;
-  const { rowIndex, btnIndex } = editingTarget;
-  if (btnIndex !== null && keyboardRows[rowIndex]) {
+  const { rowIndex, btnIndex, isNewRow } = editingTarget;
+  if (!isNewRow && btnIndex !== null && keyboardRows[rowIndex]) {
     keyboardRows[rowIndex].splice(btnIndex, 1);
-    // If row becomes empty, clean it up
     if (keyboardRows[rowIndex].length === 0) {
       keyboardRows.splice(rowIndex, 1);
     }
   }
   closeModal();
-  render();
 }
 
 // Format final payload for Telegram Bot
