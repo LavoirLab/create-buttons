@@ -273,7 +273,13 @@ body {
   transform: scale(0.98);
 }
 
-/* Button Colors: Red, Green, Blue */
+/* Button Colors: Transparent, Blue, Green, Red */
+.tg-btn-item.color-transparent {
+  background-color: var(--tg-secondary-bg);
+  color: var(--tg-text-color);
+  border: 1px solid var(--border-color);
+}
+
 .tg-btn-item.color-blue,
 .tg-btn-item.color-primary {
   background-color: #2481cc;

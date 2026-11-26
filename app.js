@@ -132,7 +132,7 @@ function render() {
 
     row.forEach((btn, btnIndex) => {
       const btnEl = document.createElement('div');
-      btnEl.className = `tg-btn-item color-${btn.color || 'blue'}`;
+      btnEl.className = `tg-btn-item color-${btn.color || 'transparent'}`;
       btnEl.textContent = btn.name || 'Button';
       btnEl.title = `${btn.name} (${btn.target})`;
 
@@ -184,7 +184,7 @@ function openModal(rowIndex, btnIndex, isNewRow = false) {
     modalTitle.textContent = 'Edit button';
     btnType.value = btn.type || 'url';
     btnName.value = btn.name || '';
-    btnColor.value = btn.color || 'blue';
+    btnColor.value = btn.color || 'transparent';
     setTargetValue(btn.target || '');
     modalBtnDelete.classList.remove('hidden');
   } else {
@@ -192,7 +192,7 @@ function openModal(rowIndex, btnIndex, isNewRow = false) {
     modalTitle.textContent = isNewRow ? 'Add button' : 'Manage button';
     btnType.value = 'url';
     btnName.value = '';
-    btnColor.value = 'blue';
+    btnColor.value = 'transparent';
     setTargetValue('');
     modalBtnDelete.classList.add('hidden');
   }
@@ -344,23 +344,30 @@ function generatePayload() {
 
 // Handle Save Action
 function handleSave() {
-  const payload = generatePayload();
+  try {
+    const payload = generatePayload();
 
-  if (payload.total === 0) {
-    alert('Please add at least one button before saving.');
-    return;
-  }
+    if (payload.total === 0) {
+      alert('Please add at least one button before saving.');
+      return;
+    }
 
-  const jsonString = JSON.stringify(payload);
+    const jsonString = JSON.stringify(payload);
 
-  if (tg && tg.sendData) {
-    // Send data back to Telegram bot and close WebApp
-    tg.sendData(jsonString);
-  } else {
-    // Demo Mode outside Telegram
-    console.log('Generated Button Data:', jsonString);
-    navigator.clipboard?.writeText(jsonString).catch(() => {});
-    alert(`Buttons saved successfully!\n\nPayload:\n${jsonString}\n\n(Copied to clipboard in demo mode)`);
+    if (tg && tg.sendData) {
+      try {
+        tg.sendData(jsonString);
+      } catch (err) {
+        alert('Telegram sendData failed: ' + (err?.message || err));
+      }
+    } else {
+      // Demo Mode outside Telegram
+      console.log('Generated Button Data:', jsonString);
+      navigator.clipboard?.writeText(jsonString).catch(() => {});
+      alert(`Buttons saved successfully!\n\nPayload:\n${jsonString}\n\n(Copied to clipboard in demo mode)`);
+    }
+  } catch (e) {
+    alert('Error saving buttons: ' + (e?.message || e));
   }
 }
 
